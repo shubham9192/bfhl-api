@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Middleware to parse JSON
 app.use(bodyParser.json());
 
 // Utility function to decode base64 and get file info
@@ -33,10 +34,11 @@ app.post('/bfhl', (req, res) => {
         return res.status(400).json({ is_success: false, message: "Invalid data input" });
     }
 
-    const full_name = "john_doe"; // Change as needed
-    const dob = "17091999"; // Change as needed
-    const college_email = "john@xyz.com"; // Change as needed
-    const college_roll_number = "ABCD123"; // Change as needed
+    // User information (hardcoded for this example)
+    const full_name = "john_doe"; // Use your actual full name here
+    const dob = "17091999"; // Use your actual date of birth in ddmmyyyy format
+    const college_email = "john@xyz.com"; // Use your actual email ID
+    const college_roll_number = "ABCD123"; // Use your actual roll number
 
     const user_id = `${full_name}_${dob}`;
     
@@ -45,14 +47,16 @@ app.post('/bfhl', (req, res) => {
     const alphabets = data.filter(item => isNaN(item));
     
     // Determine the highest lowercase alphabet
-    const lowestLowercaseAlphabet = alphabets.filter(letter => letter === letter.toLowerCase());
-    const highestLowercase = lowestLowercaseAlphabet.length > 0 
-        ? [lowestLowercaseAlphabet.sort()[lowestLowercaseAlphabet.length - 1]] 
+    const lowercaseAlphabets = alphabets.filter(letter => letter === letter.toLowerCase());
+    const highestLowercase = lowercaseAlphabets.length > 0 
+        ? [lowercaseAlphabets.sort()[lowercaseAlphabets.length - 1]] 
         : [];
 
+    // Get file information if provided
     const fileInfo = getFileInfo(file_b64);
 
-    res.json({
+    // Create response object
+    const response = {
         is_success: true,
         user_id,
         email: college_email,
@@ -61,7 +65,10 @@ app.post('/bfhl', (req, res) => {
         alphabets,
         highest_lowercase_alphabet: highestLowercase,
         ...fileInfo,
-    });
+    };
+
+    // Send response
+    res.json(response);
 });
 
 // GET /bfhl
